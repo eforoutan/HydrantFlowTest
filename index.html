@@ -273,17 +273,19 @@
     // Set your manual default values here.
     // These are the fields you were asking about.
     const DEFAULTS = {
-      project: "1616 N Perkins Flow Test",
+      project: "",
+      testDate: "",
+      testTime: "",
       testDateTime: "",
       conductedBy: "",
       residual: {
-        location: "Great Clips Parking Lot",
-        id: "001491",
+        location: "",
+        id: "",
         staticPressure: "",
         residualPressure: ""
       },
       flowHydrants: [
-        { location: "North Lowes Parking Lot", id: "001900", pitot: "" },
+        { location: "", id: "", pitot: "" },
         { location: "", id: "", pitot: "" },
         { location: "", id: "", pitot: "" }
       ]
@@ -292,6 +294,8 @@
     const state = {
       flowCount: 1,
       project: "",
+      testDate: "",
+      testTime: "",
       testDateTime: "",
       conductedBy: "",
       residual: {
@@ -310,7 +314,14 @@
 
     function applyDefaults() {
       state.project = DEFAULTS.project || "";
+      state.testDate = DEFAULTS.testDate || "";
+      state.testTime = DEFAULTS.testTime || "";
       state.testDateTime = DEFAULTS.testDateTime || "";
+      if (!state.testDate && state.testDateTime && state.testDateTime.includes("T")) {
+        const parts = state.testDateTime.split("T");
+        state.testDate = parts[0] || "";
+        state.testTime = parts[1] || "";
+      }
       state.conductedBy = DEFAULTS.conductedBy || "";
 
       state.residual.location = DEFAULTS.residual?.location || "";
@@ -463,15 +474,31 @@
     }
 
     function topRow(label, bind, value, colspan) {
-      const isDateTime = bind === "testDateTime";
-      const inputType = isDateTime ? "datetime-local" : "text";
-      const extra = isDateTime
-        ? ""
-        : ' inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false"';
+      if (bind === "testDateTime") {
+        return `
+        <tr>
+          <td class="label no-border">${esc(label)}</td>
+          <td class="input top-lines" colspan="${colspan}">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <label style="display:flex; align-items:center; gap:6px; margin:0;">
+                <span style="font-size:12px;">Date</span>
+                <input id="fld_testDate" type="date" data-bind="testDate" value="${esc(state.testDate)}">
+              </label>
+              <label style="display:flex; align-items:center; gap:6px; margin:0;">
+                <span style="font-size:12px;">Time</span>
+                <input id="fld_testTime" type="time" data-bind="testTime" value="${esc(state.testTime)}">
+              </label>
+            </div>
+          </td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+      `;
+      }
       return `
         <tr>
           <td class="label no-border">${esc(label)}</td>
-          <td class="input top-lines" colspan="${colspan}"><input id="${bindToId(bind)}" type="${inputType}" data-bind="${bind}" value="${esc(value)}"${extra}></td>
+          <td class="input top-lines" colspan="${colspan}"><input id="${bindToId(bind)}" type="text" data-bind="${bind}" value="${esc(value)}" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
         </tr>
@@ -498,6 +525,7 @@
       html += topRow("Project:", "project", state.project, headers.length);
       html += topRow("Test Date and Time:", "testDateTime", state.testDateTime, headers.length);
       html += topRow("Conducted By:", "conductedBy", state.conductedBy, headers.length);
+      
 
       html += `<tr><td class="label no-border" style="height:18px;"></td>${Array(headers.length + 2).fill('<td class="no-border"></td>').join("")}</tr>`;
 
@@ -630,6 +658,10 @@
 
           setStateValue(path, value);
 
+          if (path === "testDate" || path === "testTime") {
+            state.testDateTime = [state.testDate || "", state.testTime || ""].filter(Boolean).join("T");
+          }
+
           if (path === "residual.id") {
             state.residual.elevation = lookupElevation(value);
           }
@@ -748,6 +780,8 @@
 
     function resetState() {
       state.project = "";
+      state.testDate = "";
+      state.testTime = "";
       state.testDateTime = "";
       state.conductedBy = "";
       state.residual = { location: "", id: "", elevation: "", staticPressure: "", residualPressure: "" };
