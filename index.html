@@ -277,7 +277,8 @@
       testDateTime: "",
       conductedBy: "",
       residual: {
-        location: "Great Clips Parking Lot", id: "001491",
+        location: "Great Clips Parking Lot",
+        id: "001491",
         staticPressure: "",
         residualPressure: ""
       },
@@ -462,10 +463,15 @@
     }
 
     function topRow(label, bind, value, colspan) {
+      const isDateTime = bind === "testDateTime";
+      const inputType = isDateTime ? "datetime-local" : "text";
+      const extra = isDateTime
+        ? ""
+        : ' inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false"';
       return `
         <tr>
           <td class="label no-border">${esc(label)}</td>
-          <td class="input top-lines" colspan="${colspan}"><input id="${bindToId(bind)}" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false" data-bind="${bind}" value="${esc(value)}"></td>
+          <td class="input top-lines" colspan="${colspan}"><input id="${bindToId(bind)}" type="${inputType}" data-bind="${bind}" value="${esc(value)}"${extra}></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
         </tr>
@@ -492,7 +498,6 @@
       html += topRow("Project:", "project", state.project, headers.length);
       html += topRow("Test Date and Time:", "testDateTime", state.testDateTime, headers.length);
       html += topRow("Conducted By:", "conductedBy", state.conductedBy, headers.length);
-      html += `<tr><td class="no-border"></td><td class="section-banner" colspan="${headers.length}">Office fields you can prefill and edit manually in the DEFAULTS block</td><td class="no-border"></td><td class="no-border"></td></tr>`;
 
       html += `<tr><td class="label no-border" style="height:18px;"></td>${Array(headers.length + 2).fill('<td class="no-border"></td>').join("")}</tr>`;
 
