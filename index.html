@@ -206,9 +206,73 @@
       margin-top: 22px;
     }
     @media print {
-      body { background: white; }
-      .page { width: 100%; margin: 0; box-shadow: none; padding: 12px; }
+      @page {
+        size: letter portrait;
+        margin: 0.35in;
+      }
+      body {
+        background: white;
+      }
+      .page {
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+        padding: 8px 10px 10px;
+      }
       .toolbar { display: none; }
+      h1 {
+        font-size: 18px;
+        margin: 4px 0 14px;
+      }
+      table.flow-sheet {
+        font-size: 12px;
+      }
+      .flow-sheet td, .flow-sheet th {
+        padding: 2px 5px;
+        height: 24px;
+      }
+      .flow-sheet .label {
+        width: 220px;
+        font-size: 11px;
+      }
+      .flow-sheet .unit {
+        width: 46px;
+      }
+      .bottom-flex {
+        grid-template-columns: 235px 1fr;
+        gap: 12px;
+        margin-top: 8px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .notes {
+        font-size: 10px;
+        line-height: 1.25;
+        padding-top: 4px;
+      }
+      .notes h3 {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      .notes p {
+        margin: 3px 0;
+      }
+      .chart-card {
+        min-height: 220px;
+        padding: 6px 8px 4px;
+      }
+      svg {
+        height: 190px;
+      }
+      .disclaimer {
+        margin-top: 6px;
+        font-size: 9px;
+        padding-top: 5px;
+      }
+      .foot {
+        margin-top: 10px;
+        font-size: 10px;
+      }
     }
     @media (max-width: 1100px) {
       .page { width: calc(100vw - 12px); padding: 12px; }
@@ -240,6 +304,7 @@
 
     <div class="bottom-flex">
       <div class="notes">
+	  <h3><strong>Notes:</strong></h3>
         <p>1. Flow was calculated using the following formula:</p>
         <p class="formula">Q<sub>c</sub> = (29.83)(C<sub>d</sub>)(D)<sup>2</sup>(P)<sup>½</sup></p>
         <p>C<sub>d</sub> = Coefficient of discharge.</p>
